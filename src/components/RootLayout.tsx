@@ -3,6 +3,7 @@ import Sidebar from "./Sidebar";
 import { Outlet } from "react-router-dom";
 
 import { ThemeProvider } from "./ThemeProvider";
+import { Toaster } from "react-hot-toast";
 
 const RootLayout = () => {
   return (
@@ -11,6 +12,7 @@ const RootLayout = () => {
       <Sidebar />
       <main className="bg-gray-100 dark:bg-gray-900 p-16 overflow-y-auto  flex flex-col items-center gap-8">
         <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
+          <Toaster />
           <Outlet />
         </ThemeProvider>
       </main>

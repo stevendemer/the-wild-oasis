@@ -44,13 +44,12 @@ const Sidebar = () => {
         />
         <div className="flex flex-col items-center gap-8">
           {links.map((link, idx) => (
-            <span
-              className="flex items-center flex-1 space-x-6 hover:bg-gray-200 dark:hover:bg-gray-200/30  px-4 py-2 rounded-lg w-full transition-all duration-300 cursor-pointer"
-              key={idx}
-            >
-              <span>{link.icon}</span>
-              <Link to={link.path}>{link.name}</Link>
-            </span>
+            <Link to={link.path} key={idx}>
+              <span className="flex items-center flex-1 space-x-6 hover:bg-gray-100 dark:hover:bg-gray-100/30  px-4 py-2 rounded-lg w-full transition-all duration-300 cursor-pointer">
+                <span className="mx-4">{link.icon}</span>
+                {link.name}
+              </span>
+            </Link>
           ))}
         </div>
       </div>
