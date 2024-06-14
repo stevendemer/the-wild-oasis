@@ -30,23 +30,23 @@ const CabinRow = ({ cabin }: { cabin: Tables<"cabins"> }) => {
   };
 
   return (
-    <TableBody className="mx-auto">
-      <TableRow className="cursor-pointer" key={cabin.id}>
-        <TableCell colSpan={2}>
+    <TableBody key={cabin.id} className="mx-auto">
+      <TableRow className="cursor-pointer">
+        <TableCell>
           <img
-            className="aspect-square object-cover w-40 h-20 antialiased scale-110"
+            className="aspect-[1/3] object-cover w-40 h-20"
             src={cabin.image || ""}
             alt="Cabin Image"
           />
         </TableCell>
-        <TableCell className="font-semibold">{cabin.name}</TableCell>
+        <TableCell className="font-semibold w-[200px]">{cabin.name}</TableCell>
 
         <TableCell className="font-semibold whitespace-nowrap">
           Fills up to {cabin.max_capacity}
         </TableCell>
         <TableCell className="font-semibold">{cabin.regular_price}</TableCell>
         <TableCell className="font-semibold">{cabin.discount || "-"}</TableCell>
-        <TableCell colSpan={3} className="font-regular leading-6">
+        <TableCell className="font-regular leading-6">
           {cabin.description || "-"}
         </TableCell>
         <TableCell className="flex items-center flex-1 space-x-4">

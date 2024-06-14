@@ -19,6 +19,7 @@ import SortBy from "./SortBy";
 import CabinTableBody from "./TableBody";
 import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
+import Pagination from "./Pagination";
 
 const CabinTable = () => {
   const { isLoading, cabins, error } = useCabins();
@@ -180,13 +181,12 @@ const CabinTable = () => {
           ]}
         />
       </div>
-      <Table className="mt-20 mx-auto">
+      <Table className="mt-20">
         <TableCaption>All cabins</TableCaption>
         <TableHeader>
           <TableRow>
-            <TableHead></TableHead>
-            <TableHead></TableHead>
-            <TableHead>Name</TableHead>
+            <TableHead className="w-[200px]"></TableHead>
+            <TableHead className="w-[120px]">Name</TableHead>
             <TableHead>Capacity</TableHead>
             <TableHead>Price</TableHead>
             <TableHead>Discount</TableHead>
@@ -202,8 +202,9 @@ const CabinTable = () => {
         /> */}
         <TableFooter>
           <TableRow>
-            <TableCell colSpan={5} className="text-lg font-semibold">
+            <TableCell colSpan={8} className="text-lg font-semibold space-y-8">
               Total: <span>{getSum(filteredCabins)} $</span>
+              <Pagination count={45} />
             </TableCell>
           </TableRow>
         </TableFooter>

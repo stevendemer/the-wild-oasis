@@ -20,9 +20,10 @@ import SortBy from "./SortBy";
 import CabinTableBody from "./TableBody";
 import { useEffect, useState } from "react";
 import BookingRow from "./BookingRow";
+import Pagination from "./Pagination";
 
 const BookingTable = () => {
-  const { bookings, isLoading, error } = useBookings();
+  const { bookings, isLoading, error, count } = useBookings();
 
   if (error) {
     toast.error(error.message);
@@ -61,6 +62,11 @@ const BookingTable = () => {
         {bookings?.map((booking) => (
           <BookingRow booking={booking} key={booking.id} />
         ))}
+        <TableFooter>
+          <TableCell colSpan={5}>
+            <Pagination count={count} />
+          </TableCell>
+        </TableFooter>
       </Table>
     </MenuProvider>
   );
