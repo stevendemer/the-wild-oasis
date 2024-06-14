@@ -2,13 +2,23 @@ import { Regex } from "lucide-react";
 import { supabase, supabaseUrl } from "./supabase";
 import { Database, Tables, Enums } from "@/types/database";
 
-export async function getCabins() {
-  const { data: cabins, error } = await supabase.from("cabins").select("*");
+export async function getCabins({
+  filter,
+  sortBy,
+}: {
+  filter?: { field: string; value: string };
+  sortBy?: { field: string; direction: string };
+}) {
+  let query = supabase.from("cabins").select("*").throwOnError();
 
-  if (error) {
-    console.error(error);
-    throw new Error("Cabins could not be loaded");
+  if (sortBy) {
+    console.log("Field to sort the cabins by ", sortBy.field);
+    query = query.order(sortBy.field, {
+      ascending: sortBy.direction === "asc",
+    });
   }
+
+  const { data: cabins } = await query;
 
   return cabins;
 }
@@ -99,12 +109,11 @@ export async function createEditCabin(newCabin: Tables<"cabins">, id: number) {
 }
 
 export async function deleteCabin(id: number) {
-  const { error, data } = await supabase.from("cabins").delete().eq("id", id);
+  const { data } = await supabase
+    .from("cabins")
+    .delete()
+    .eq("id", id)
+    .throwOnError();
 
-  if (error) {
-    console.error(error);
-    throw new Error("Cabin could not be deleted");
-  }
-  console.log(data);
   return data;
 }

@@ -18,17 +18,6 @@ const CabinRow = ({ cabin }: { cabin: Tables<"cabins"> }) => {
   const { isDeleting, deleteCabin } = useDeleteCabin();
   const { isCreating, createCabin } = useCreateCabin();
 
-  // const {
-  //   id,
-  //   name,
-  //   max_capacity,
-  //   discount,
-  //   image,
-  //   description,
-  //   created_at,
-  //   regular_price,
-  // } = cabin;
-
   const onDuplicate = () => {
     createCabin({
       name: `Copy of ${cabin.name}`,
@@ -41,35 +30,40 @@ const CabinRow = ({ cabin }: { cabin: Tables<"cabins"> }) => {
   };
 
   return (
-    <TableBody>
+    <TableBody className="mx-auto">
       <TableRow className="cursor-pointer" key={cabin.id}>
         <TableCell colSpan={2}>
           <img
-            className="aspect-[3/2] object-cover w-28 h-20 object-center scale-110"
+            className="aspect-square object-cover w-40 h-20 antialiased scale-110"
             src={cabin.image || ""}
             alt="Cabin Image"
           />
         </TableCell>
         <TableCell className="font-semibold">{cabin.name}</TableCell>
-        <TableCell className="font-semibold">
+
+        <TableCell className="font-semibold whitespace-nowrap">
           Fills up to {cabin.max_capacity}
         </TableCell>
         <TableCell className="font-semibold">{cabin.regular_price}</TableCell>
         <TableCell className="font-semibold">{cabin.discount || "-"}</TableCell>
-        <TableCell className="font-semibold">
+        <TableCell colSpan={3} className="font-regular leading-6">
           {cabin.description || "-"}
         </TableCell>
-        <TableCell className=" space-x-4">
+        <TableCell className="flex items-center flex-1 space-x-4">
           <Button
             disabled={isCreating}
             onClick={() => onDuplicate()}
-            variant="secondary"
+            variant="outline"
           >
             Duplicate
             <HiSquare2Stack size={10} className="mx-2" />
           </Button>
 
-          <Button disabled={isCreating}>
+          <Button
+            variant="outline"
+            className="bg-indigo-500 text-gray-50 hover:bg-indigo-600"
+            disabled={isCreating}
+          >
             Edit
             <HiPencil size={10} className="mx-2" />
           </Button>

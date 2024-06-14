@@ -7,7 +7,7 @@ const Filter = ({
   options,
 }: {
   filterField: string;
-  options: { value: string }[];
+  options: { value: string; label: string }[];
 }) => {
   const [searchParams, setSearchParams] = useSearchParams();
   const currentFilter = searchParams.get(filterField) || options.at(0)?.value;
@@ -17,8 +17,6 @@ const Filter = ({
     setSearchParams(searchParams);
   }
 
-  console.log("Current filter is ", currentFilter);
-
   return (
     <div className="items-center space-x-2 relative right-10 hidden sm:flex">
       {options?.map((option) => (
@@ -27,11 +25,11 @@ const Filter = ({
             variant="outline"
             className={cn(
               "capitalize",
-              option.value === currentFilter && "bg-indigo-600 text-gray-100"
+              option.value === currentFilter && "bg-indigo-500 text-gray-100"
             )}
             onClick={() => onClick(option.value)}
           >
-            {option.value.split("-").join(" ")}
+            {option.label}
           </Button>
         </div>
       ))}

@@ -24,17 +24,18 @@ const CabinTable = () => {
   const { isLoading, cabins, error } = useCabins();
   const [searchParams] = useSearchParams();
   const [sortedCabins, setSortedCabins] = useState<Tables<"cabins">[]>([]);
-  // const [filteredCabins, setFilteredCabins] = useState<Tables<"cabins">[]>([]);
-  // const [sum, setSum] = useState(0);
+  const [filter, setFilter] = useState("");
+  const [filteredCabins, setFilteredCabins] = useState<Tables<"cabins">[]>([]);
+  const [sum, setSum] = useState(0);
 
-  let filteredCabins: Tables<"cabins">[] = [];
+  // let filteredCabins: Tables<"cabins">[] = [];
 
   useEffect(() => {
     const sortCabins = () => {
       // sorting the cabins
       const sortBy = searchParams.get("sortBy") || "start_date-asc";
       const [field, direction] = sortBy.split("-");
-      const modifier = direction === "asc" ? -1 : 1;
+      const modifier = direction === "asc" ? 1 : -1;
 
       const sorted = filteredCabins?.sort((a, b) => {
         // in case of name comparison
@@ -52,7 +53,48 @@ const CabinTable = () => {
     };
 
     sortCabins();
-  }, [searchParams, cabins, filteredCabins]);
+  }, [searchParams, filteredCabins]);
+
+  useEffect(() => {
+    const filterCabins = () => {
+      // const filterValue = searchParams.get("discount") || "all";
+
+      setFilter(searchParams.get("discount") || "all");
+
+      let filteredCabins: Tables<"cabins">[];
+
+      switch (filter) {
+        case "all":
+          setFilteredCabins(cabins);
+          // filteredCabins = cabins;
+          break;
+        case "no-discount":
+          filteredCabins = cabins.filter((cabin) => cabin.discount === 0);
+          setFilteredCabins(filteredCabins);
+          break;
+        case "with-discount":
+          filteredCabins = cabins.filter((cabin) => cabin.discount > 0);
+          setFilteredCabins(filteredCabins);
+          break;
+        default:
+          console.log("Invalid value");
+          break;
+      }
+
+      if (filteredCabins) {
+        const sum = filteredCabins?.reduce((acc, curr) => {
+          return (
+            acc +
+            (curr.discount
+              ? curr.regular_price - curr.discount
+              : curr.regular_price)
+          );
+        }, 0);
+        setSum(sum);
+      }
+    };
+    filterCabins();
+  }, [filteredCabins, searchParams, filter, cabins]);
 
   if (isLoading) {
     return (
@@ -95,25 +137,8 @@ const CabinTable = () => {
     throw new Error("Error fetching the cabins ");
   }
 
-  const filterValue = searchParams.get("discount") || "all";
-
-  switch (filterValue) {
-    case "all":
-      filteredCabins = cabins;
-      break;
-    case "no-discount":
-      filteredCabins = cabins.filter((cabin) => cabin.discount === 0);
-      break;
-    case "with-discount":
-      filteredCabins = cabins.filter((cabin) => cabin.discount > 0);
-      break;
-    default:
-      console.log("Invalid value");
-      break;
-  }
-
-  const getSum = (cabins: Tables<"cabins">[]) => {
-    return cabins.reduce((acc, curr) => {
+  const getSum = (cabins?: Tables<"cabins">[]) => {
+    return cabins?.reduce((acc, curr) => {
       return (
         acc +
         (curr.discount
@@ -129,9 +154,9 @@ const CabinTable = () => {
         <Filter
           filterField="discount"
           options={[
-            { value: "all" },
-            { value: "with-discount" },
-            { value: "no-discount" },
+            { value: "all", label: "All" },
+            { value: "with-discount", label: "With discount" },
+            { value: "no-discount", label: "No discount" },
           ]}
         />
 
@@ -155,26 +180,26 @@ const CabinTable = () => {
           ]}
         />
       </div>
-      <Table className="mt-20 container mx-auto">
-        <TableCaption>A list of all registered cabins.</TableCaption>
+      <Table className="mt-20 mx-auto">
+        <TableCaption>All cabins</TableCaption>
         <TableHeader>
           <TableRow>
             <TableHead></TableHead>
             <TableHead></TableHead>
-            <TableHead>Cabin</TableHead>
+            <TableHead>Name</TableHead>
             <TableHead>Capacity</TableHead>
             <TableHead>Price</TableHead>
             <TableHead>Discount</TableHead>
             <TableHead>Description</TableHead>
           </TableRow>
         </TableHeader>
-        {/* {filteredCabins?.map((cabin: Tables<"cabins">) => (
-            <CabinRow key={cabin.id} cabin={cabin} />
-          ))} */}
-        <CabinTableBody
+        {filteredCabins?.map((cabin: Tables<"cabins">) => (
+          <CabinRow key={cabin.id} cabin={cabin} />
+        ))}
+        {/* <CabinTableBody
           data={filteredCabins}
           render={(cabin) => <CabinRow cabin={cabin} key={cabin.id} />}
-        />
+        /> */}
         <TableFooter>
           <TableRow>
             <TableCell colSpan={5} className="text-lg font-semibold">

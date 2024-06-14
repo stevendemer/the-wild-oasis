@@ -6,7 +6,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { ChangeEvent } from "react";
 
 const SortBy = ({
   options,
@@ -23,8 +22,8 @@ const SortBy = ({
   return (
     <div className="relative left-0">
       <Select onValueChange={onChange}>
-        <SelectTrigger className="w-[200px]">
-          <SelectValue placeholder="Sort by"></SelectValue>
+        <SelectTrigger className="w-[300px]">
+          <SelectValue placeholder={`Sort by ${options[0].label}`} />
         </SelectTrigger>
         <SelectContent>
           {options.map((option) => (
