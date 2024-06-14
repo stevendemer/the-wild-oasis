@@ -14,8 +14,21 @@ export async function getCabins() {
 }
 
 export async function createCabin(newCabin: Tables<"cabins">) {
-  const imageName = `${Math.random()}-${newCabin.name}`.replace("/", "");
-  const imagePath = `${supabaseUrl}/storage/v1/object/public/cabin_images/${imageName}`;
+  console.log("New cabin is ", newCabin.image);
+
+  const hasImagePath = newCabin.image?.startsWith?.(supabaseUrl);
+
+  const imageName = `${Math.random()}-${newCabin.image.name}`.replaceAll(
+    "/",
+    ""
+  );
+
+  // check for duplication
+  const imagePath = hasImagePath
+    ? newCabin.image
+    : `${supabaseUrl}/storage/v1/object/public/cabin_images/${imageName}`;
+
+  // const imagePath = `${supabaseUrl}/storage/v1/object/public/cabin_images/${imageName}`;
   const { data, error } = await supabase.from("cabins").insert({
     ...newCabin,
     image: imagePath,
@@ -26,7 +39,7 @@ export async function createCabin(newCabin: Tables<"cabins">) {
     .upload(imageName, newCabin.image!);
 
   // prevent new cabin from being created if error
-  if (storageError && data) {
+  if (storageError) {
     await supabase.from("cabins").delete().eq("id", data.id);
     console.error(storageError);
     throw new Error("Cabin image was not uploaded to the bucket.");
@@ -42,7 +55,10 @@ export async function createCabin(newCabin: Tables<"cabins">) {
 export async function createEditCabin(newCabin: Tables<"cabins">, id: number) {
   const hasImagePath = newCabin.image?.startsWith?.(supabaseUrl);
 
-  const imageName = `${Math.random()}-${newCabin.image}`.replace("/", "");
+  const imageName = `${Math.random()}-${newCabin.image.name}`.replaceAll(
+    "/",
+    ""
+  );
   const imagePath = hasImagePath
     ? newCabin.image
     : `${supabaseUrl}/storage/v1/object/public/cabin_images/${imageName}`;
@@ -51,12 +67,12 @@ export async function createEditCabin(newCabin: Tables<"cabins">, id: number) {
   let query = supabase.from("cabins");
 
   // A) CREATE
-  if (!id) query = query.insert([{ ...newCabin, image: imagePath }]);
+  // if (!id) query = query.insert([{ ...newCabin, image: imagePath }]);
 
   // B) EDIT
   if (id) query = query.update({ ...newCabin, image: imagePath }).eq("id", id);
 
-  const { data, error } = await query.select().single();
+  const { data, error } = query.select().single();
 
   if (error) {
     console.error(error);

@@ -2,8 +2,10 @@ import { AiOutlineHome } from "react-icons/ai";
 import { HiHomeModern } from "react-icons/hi2";
 import { HiOutlineCalendarDays } from "react-icons/hi2";
 import { PiUserCircleDuotone } from "react-icons/pi";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import { CiSettings } from "react-icons/ci";
+import { useState } from "react";
+import { cn } from "@/lib/utils";
 
 const links = [
   {
@@ -34,8 +36,12 @@ const links = [
 ];
 
 const Sidebar = () => {
+  // stores the correct active link after refreshing page
+  const location = useLocation();
+  const [path, setPath] = useState(location.pathname);
+
   return (
-    <div className="flex flex-col gap-6 p-3 text-gray-500 dark:text-gray-100 bg-gray-50 dark:bg-gray-800 rounded-md max-w-[90rem]">
+    <div className=" flex-col gap-6 p-3 text-gray-500 dark:text-gray-400 bg-gray-50 dark:bg-gray-800 rounded-md max-w-[90rem] hidden sm:flex">
       <div className="flex items-center flex-col flex-1">
         <img
           src="/logo-light.png"
@@ -44,8 +50,13 @@ const Sidebar = () => {
         />
         <div className="flex flex-col items-center gap-8">
           {links.map((link, idx) => (
-            <Link to={link.path} key={idx}>
-              <span className="flex items-center flex-1 space-x-6 hover:bg-gray-100 dark:hover:bg-gray-100/30  px-4 py-2 rounded-lg w-full transition-all duration-300 cursor-pointer">
+            <Link onClick={() => setPath(link.path)} to={link.path} key={idx}>
+              <span
+                className={cn(
+                  "flex items-center flex-1 space-x-6 hover:bg-gray-100 dark:hover:bg-gray-100/30  px-4 py-2 rounded-lg w-full transition-all duration-300 cursor-pointer",
+                  path === link.path && "dark:text-gray-100 text-gray-800"
+                )}
+              >
                 <span className="mx-4">{link.icon}</span>
                 {link.name}
               </span>

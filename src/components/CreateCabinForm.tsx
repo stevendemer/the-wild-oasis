@@ -14,32 +14,35 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { ErrorMessage } from "@hookform/error-message";
+import { DialogClose } from "@radix-ui/react-dialog";
+import { useCreateCabin } from "@/hooks/useCreateCabin";
 
 type FormValues = {
   name: string;
   max_capacity: number;
   regular_price: number;
-  discount: number;
+  discount?: number;
   image: string;
   id: number;
   created_at: string;
-  description: string;
+  description?: string;
   singleErrorInput: string;
 };
 
 const CreateCabinForm = () => {
-  const client = new QueryClient();
+  // const client = new QueryClient();
 
   const [show, setShow] = useState(false);
-  const { mutate, isPending } = useMutation({
-    mutationFn: createCabin,
-    onSuccess: () => {
-      client.invalidateQueries({ queryKey: ["cabins"] });
-      toast.success("New cabin added !");
-      reset();
-    },
-    onError: (error) => toast.error(error.message),
-  });
+  const { error, isCreating, createCabin } = useCreateCabin();
+  // const { mutate, isPending } = useMutation({
+  //   mutationFn: createCabin,
+  //   onSuccess: () => {
+  //     client.invalidateQueries({ queryKey: ["cabins"] });
+  //     toast.success("New cabin added !");
+  //     reset();
+  //   },
+  //   onError: (error) => toast.error(error.message),
+  // });
 
   //   const { isCreating, createCabin } = useCreateCabin();
 
@@ -48,26 +51,27 @@ const CreateCabinForm = () => {
     handleSubmit,
     reset,
     getValues,
-    formState: { errors },
+    formState: { errors, isValid },
   } = useForm<FormValues>();
 
   const onSubmit = handleSubmit((data) => {
     const image = typeof data.image === "string" ? data.image : data.image[0];
 
-    mutate({
+    createCabin({
       ...data,
       image,
     });
+
+    if (isValid) {
+      setShow(false);
+      reset();
+    }
   });
 
   return (
-    <Dialog>
+    <Dialog onOpenChange={() => setShow(true)}>
       <DialogTrigger asChild>
-        <Button
-          variant="secondary"
-          className="rounded-lg text-md"
-          onClick={() => setShow((prev) => !prev)}
-        >
+        <Button className="rounded-lg text-md" onClick={() => setShow(true)}>
           Add new cabin
         </Button>
       </DialogTrigger>
@@ -133,13 +137,14 @@ const CreateCabinForm = () => {
             </Label>
             <Input
               {...register("discount", {
-                required: "Field is required",
                 min: {
                   value: 0,
                   message: "Discount cannot be negative",
                 },
               })}
+              defaultValue={0}
               placeholder="50"
+              type="number"
             />
             {errors?.discount?.message && (
               <span className="text-red-700 text-xl">
@@ -150,12 +155,7 @@ const CreateCabinForm = () => {
             <Label className="text-md font-regular" htmlFor="description">
               Description
             </Label>
-            <Input
-              {...register("description", {
-                required: "Field is required",
-              })}
-              placeholder="50"
-            />
+            <Input {...register("description")} placeholder="50" />
             {errors?.description?.message && (
               <span className="text-red-700 text-xl">
                 {errors.description.message}
@@ -180,14 +180,16 @@ const CreateCabinForm = () => {
               </span>
             )}
 
-            <Button
-              disabled={isPending}
-              type="submit"
-              size="sm"
-              className="px-3"
-            >
-              Submit
-            </Button>
+            <DialogClose asChild>
+              <Button
+                disabled={isCreating}
+                type="submit"
+                size="sm"
+                className="px-3"
+              >
+                Submit
+              </Button>
+            </DialogClose>
           </form>
         </div>
       </DialogContent>

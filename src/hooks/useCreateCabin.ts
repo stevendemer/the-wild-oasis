@@ -1,11 +1,15 @@
-import { QueryClient, useMutation } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { createCabin as createCabinApi } from "@/services/cabins";
 import { toast } from "react-hot-toast";
 
 export function useCreateCabin() {
-  const client = new QueryClient();
+  const client = useQueryClient();
 
-  const { mutate: createCabin, isPending: isCreating } = useMutation({
+  const {
+    mutate: createCabin,
+    isPending: isCreating,
+    error,
+  } = useMutation({
     mutationFn: createCabinApi,
     onSuccess: () => {
       //refresh the cache
@@ -18,5 +22,6 @@ export function useCreateCabin() {
   return {
     isCreating,
     createCabin,
+    error,
   };
 }

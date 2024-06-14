@@ -1,5 +1,4 @@
 import { useCabins } from "@/hooks/useCabins";
-import { Button } from "./ui/button";
 import {
   Table,
   TableBody,
@@ -10,62 +9,157 @@ import {
   TableRow,
   TableFooter,
 } from "@/components/ui/table";
+import { Skeleton } from "./ui/skeleton";
 import { useSearchParams } from "react-router-dom";
-import { Database, Tables } from "@/types/database";
-import CreateCabinForm from "./CreateCabinForm";
+import { Tables } from "@/types/database";
 import { MenuProvider } from "@/context/MenuContext";
-import CabinOptions from "./CabinOptions";
-import { useDeleteCabin } from "@/hooks/useDeleteCabin";
-import { HiSquare2Stack, HiPencil, HiTrash } from "react-icons/hi2";
+import CabinRow from "./CabinRow";
+import Filter from "./Filter";
+import SortBy from "./SortBy";
+import CabinTableBody from "./TableBody";
+import { useEffect, useState } from "react";
+import toast from "react-hot-toast";
 
 const CabinTable = () => {
-  const { isLoading, cabins } = useCabins();
+  const { isLoading, cabins, error } = useCabins();
   const [searchParams] = useSearchParams();
-  const { isDeleting, deleteCabin } = useDeleteCabin();
+  const [sortedCabins, setSortedCabins] = useState<Tables<"cabins">[]>([]);
+  // const [filteredCabins, setFilteredCabins] = useState<Tables<"cabins">[]>([]);
+  // const [sum, setSum] = useState(0);
+
+  let filteredCabins: Tables<"cabins">[] = [];
+
+  useEffect(() => {
+    const sortCabins = () => {
+      // sorting the cabins
+      const sortBy = searchParams.get("sortBy") || "start_date-asc";
+      const [field, direction] = sortBy.split("-");
+      const modifier = direction === "asc" ? -1 : 1;
+
+      const sorted = filteredCabins?.sort((a, b) => {
+        // in case of name comparison
+        if (typeof a[field] === "string" && typeof b[field] === "string") {
+          return (
+            (a[field] as string).localeCompare(b[field] as string) * modifier
+          );
+        }
+        if (typeof a[field] === "number" && typeof b[field] === "number") {
+          return (a[field] - b[field]) * modifier;
+        }
+      }) as Tables<"cabins">[];
+
+      setSortedCabins(sorted);
+    };
+
+    sortCabins();
+  }, [searchParams, cabins, filteredCabins]);
 
   if (isLoading) {
-    return <div className="text-xl text-center">Cabins are loading...</div>;
+    return (
+      <Table>
+        <TableHeader>
+          <TableRow>
+            {Array.from({ length: 4 }).map((_, index) => (
+              <TableHead key={index}>
+                <Skeleton className="w-[90px] h-5" />
+              </TableHead>
+            ))}
+          </TableRow>
+        </TableHeader>
+        <TableBody>
+          {Array.from({ length: 4 }).map((_, index) => (
+            <TableRow key={index}>
+              {Array.from({ length: 4 }).map((_, index) => (
+                <TableCell key={index}>
+                  <Skeleton className="w-[400px] h-16" />
+                </TableCell>
+              ))}
+            </TableRow>
+          ))}
+        </TableBody>
+      </Table>
+    );
   }
 
   if (!cabins?.length) {
-    return <div className="text-xl text-center "> No cabins found !</div>;
+    return (
+      <div className="text-2xl font-semibold text-center ">
+        {" "}
+        No cabins found !
+      </div>
+    );
   }
 
-  const calculateSum = (cabins: Tables<"cabins">[]) => {
-    let sum = 0;
-    cabins.map((c) => (sum += c.regular_price!));
-    return sum;
-  };
+  if (error) {
+    toast.error(error.message);
+    throw new Error("Error fetching the cabins ");
+  }
 
   const filterValue = searchParams.get("discount") || "all";
 
-  let filteredCabins;
-
-  if (filterValue === "all") filteredCabins = cabins;
-  if (filterValue === "no-discount") {
-    filteredCabins = cabins.filter((c) => c.discount === 0);
+  switch (filterValue) {
+    case "all":
+      filteredCabins = cabins;
+      break;
+    case "no-discount":
+      filteredCabins = cabins.filter((cabin) => cabin.discount === 0);
+      break;
+    case "with-discount":
+      filteredCabins = cabins.filter((cabin) => cabin.discount > 0);
+      break;
+    default:
+      console.log("Invalid value");
+      break;
   }
-  if (filterValue === "with-discount") {
-    filteredCabins = cabins.filter((c) => c.discount > 0);
-  }
 
-  const sortBy = searchParams.get("sortBy") || "startDate-asc";
-  const [field, direction] = sortBy.split("-");
-  const modifier = direction === "asc" ? 1 : -1;
-
-  const sortedCabins = filteredCabins?.sort(
-    (a, b) => (a[field] - b[field]) * modifier
-  );
+  const getSum = (cabins: Tables<"cabins">[]) => {
+    return cabins.reduce((acc, curr) => {
+      return (
+        acc +
+        (curr.discount
+          ? curr.regular_price - curr.discount
+          : curr.regular_price)
+      );
+    }, 0);
+  };
 
   return (
     <MenuProvider>
-      <div className="flex justify-end">
-        <CabinOptions />
+      <div className="flex justify-end absolute right-10 z-10">
+        <Filter
+          filterField="discount"
+          options={[
+            { value: "all" },
+            { value: "with-discount" },
+            { value: "no-discount" },
+          ]}
+        />
+
+        <SortBy
+          options={[
+            { value: "name-asc", label: "sort by name (A-Z)" },
+            { value: "name-desc", label: "sort by name (Z-A)" },
+            { value: "regular_price-asc", label: "sort by price (low first)" },
+            {
+              value: "regular_price-desc",
+              label: "sort by price (high first)",
+            },
+            {
+              value: "max_capacity-asc",
+              label: "sort by capacity (low first)",
+            },
+            {
+              value: "max_capacity-desc",
+              label: "sort by capacity (high first)",
+            },
+          ]}
+        />
       </div>
-      <Table>
+      <Table className="mt-20 container mx-auto">
         <TableCaption>A list of all registered cabins.</TableCaption>
         <TableHeader>
           <TableRow>
+            <TableHead></TableHead>
             <TableHead></TableHead>
             <TableHead>Cabin</TableHead>
             <TableHead>Capacity</TableHead>
@@ -74,44 +168,18 @@ const CabinTable = () => {
             <TableHead>Description</TableHead>
           </TableRow>
         </TableHeader>
-        <TableBody>
-          {cabins.map((cabin: Tables<"cabins">) => (
-            <TableRow className="cursor-pointer" key={cabin.id}>
-              <TableCell colSpan={2}>
-                <img
-                  className="aspect-[3/2] object-cover w-28 h-20 object-center scale-110"
-                  src={cabin.image || ""}
-                  alt="Cabin Image"
-                />
-              </TableCell>
-              <TableCell className="font-medium">{cabin.name}</TableCell>
-              <TableCell>Fills up to {cabin.max_capacity}</TableCell>
-              <TableCell>{cabin.regular_price}</TableCell>
-              <TableCell>{cabin.discount || "-"}</TableCell>
-              <TableCell>{cabin.description || "-"}</TableCell>
-              <TableCell className="flex items-center flex-1 space-x-2">
-                <Button>
-                  Edit
-                  <HiPencil className="mx-2" />
-                </Button>
-                <Button
-                  onClick={() => {
-                    console.log(cabin.id);
-                    deleteCabin(cabin.id);
-                  }}
-                  variant="destructive"
-                  disabled={isDeleting}
-                >
-                  Delete
-                  <HiTrash className="mx-2" />
-                </Button>
-              </TableCell>
-            </TableRow>
-          ))}
-        </TableBody>
+        {/* {filteredCabins?.map((cabin: Tables<"cabins">) => (
+            <CabinRow key={cabin.id} cabin={cabin} />
+          ))} */}
+        <CabinTableBody
+          data={filteredCabins}
+          render={(cabin) => <CabinRow cabin={cabin} key={cabin.id} />}
+        />
         <TableFooter>
           <TableRow>
-            <TableCell colSpan={5}>Total: {calculateSum(cabins)} $</TableCell>
+            <TableCell colSpan={5} className="text-lg font-semibold">
+              Total: <span>{getSum(filteredCabins)} $</span>
+            </TableCell>
           </TableRow>
         </TableFooter>
       </Table>
