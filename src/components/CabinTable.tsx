@@ -16,117 +16,69 @@ import { ModalProvider } from "@/context/MenuContext";
 import CabinRow from "./CabinRow";
 import Filter from "./Filter";
 import SortBy from "./SortBy";
-import CabinTableBody from "./TableBody";
 import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import Pagination from "./Pagination";
 import { Button } from "./ui/button";
 import { useModal } from "@/store";
 import { Plus } from "lucide-react";
+import Spinner from "./Spinner";
 
 const CabinTable = () => {
   const { isLoading, cabins, error, count } = useCabins();
   const [searchParams] = useSearchParams();
-  const [sortedCabins, setSortedCabins] = useState<Tables<"cabins">[]>([]);
-  const [filter, setFilter] = useState("");
-  const [filteredCabins, setFilteredCabins] = useState<Tables<"cabins">[]>([]);
   const [sum, setSum] = useState(0);
+  const [finalCabins, setFinalCabins] = useState<Tables<"cabins">[]>([]);
 
   const { onOpen } = useModal();
 
-  // let filteredCabins: Tables<"cabins">[] = [];
-
   useEffect(() => {
-    const sortCabins = () => {
-      // sorting the cabins
+    if (cabins) {
+      const filterValue = searchParams.get("discount") || "all";
       const sortBy = searchParams.get("sortBy") || "start_date-asc";
       const [field, direction] = sortBy.split("-");
       const modifier = direction === "asc" ? 1 : -1;
 
-      const sorted = filteredCabins?.sort((a, b) => {
-        // in case of name comparison
+      let filteredCabins = cabins;
+
+      switch (filterValue) {
+        case "no-discount":
+          filteredCabins = cabins.filter((cabin) => cabin.discount === 0);
+          break;
+        case "with-discount":
+          filteredCabins = cabins.filter((cabin) => cabin.discount > 0);
+          break;
+        default:
+          break;
+      }
+
+      const sortedCabins = [...filteredCabins].sort((a, b) => {
         if (typeof a[field] === "string" && typeof b[field] === "string") {
-          return (
-            (a[field] as string).localeCompare(b[field] as string) * modifier
-          );
+          return a[field].localeCompare(b[field]) * modifier;
         }
         if (typeof a[field] === "number" && typeof b[field] === "number") {
           return (a[field] - b[field]) * modifier;
         }
-      }) as Tables<"cabins">[];
+        return 0;
+      });
 
-      setSortedCabins(sorted);
-    };
+      setFinalCabins(sortedCabins);
 
-    sortCabins();
-  }, [searchParams, filteredCabins]);
+      const totalSum = sortedCabins.reduce((acc, curr) => {
+        return (
+          acc +
+          (curr.discount
+            ? curr.regular_price - curr.discount
+            : curr.regular_price)
+        );
+      }, 0);
 
-  useEffect(() => {
-    const filterCabins = () => {
-      // const filterValue = searchParams.get("discount") || "all";
-
-      setFilter(searchParams.get("discount") || "all");
-
-      let filteredCabins: Tables<"cabins">[];
-
-      switch (filter) {
-        case "all":
-          setFilteredCabins(cabins);
-          // filteredCabins = cabins;
-          break;
-        case "no-discount":
-          filteredCabins = cabins.filter((cabin) => cabin.discount === 0);
-          setFilteredCabins(filteredCabins);
-          break;
-        case "with-discount":
-          filteredCabins = cabins.filter((cabin) => cabin.discount > 0);
-          setFilteredCabins(filteredCabins);
-          break;
-        default:
-          console.log("Invalid value");
-          break;
-      }
-
-      if (filteredCabins) {
-        const sum = filteredCabins?.reduce((acc, curr) => {
-          return (
-            acc +
-            (curr.discount
-              ? curr.regular_price - curr.discount
-              : curr.regular_price)
-          );
-        }, 0);
-        setSum(sum);
-      }
-    };
-    filterCabins();
-  }, [filteredCabins, searchParams, filter, cabins]);
+      setSum(totalSum);
+    }
+  }, [cabins, searchParams]);
 
   if (isLoading) {
-    return (
-      <Table>
-        <TableHeader>
-          <TableRow>
-            {Array.from({ length: 4 }).map((_, index) => (
-              <TableHead key={index}>
-                <Skeleton className="w-[90px] h-5" />
-              </TableHead>
-            ))}
-          </TableRow>
-        </TableHeader>
-        <TableBody>
-          {Array.from({ length: 4 }).map((_, index) => (
-            <TableRow key={index}>
-              {Array.from({ length: 4 }).map((_, index) => (
-                <TableCell key={index}>
-                  <Skeleton className="w-[400px] h-16" />
-                </TableCell>
-              ))}
-            </TableRow>
-          ))}
-        </TableBody>
-      </Table>
-    );
+    return <Spinner />;
   }
 
   if (!cabins?.length) {
@@ -155,7 +107,7 @@ const CabinTable = () => {
   };
 
   return (
-    <ModalProvider>
+    <>
       <div className="flex justify-end absolute right-10 z-10">
         <Filter
           filterField="discount"
@@ -199,7 +151,7 @@ const CabinTable = () => {
             <TableHead>Description</TableHead>
           </TableRow>
         </TableHeader>
-        {filteredCabins?.map((cabin: Tables<"cabins">) => (
+        {finalCabins?.map((cabin: Tables<"cabins">) => (
           <CabinRow key={cabin.id} cabin={cabin} />
         ))}
         {/* <CabinTableBody
@@ -209,7 +161,7 @@ const CabinTable = () => {
         <TableFooter>
           <TableRow>
             <TableCell colSpan={8} className="text-lg font-semibold space-y-8">
-              Total: <span>{getSum(filteredCabins)} $</span>
+              Total: <span>{sum} $</span>
               <Pagination count={count} />
             </TableCell>
           </TableRow>
@@ -219,7 +171,7 @@ const CabinTable = () => {
         <Plus />
         <span>Add cabin</span>
       </Button>
-    </ModalProvider>
+    </>
   );
 };
 

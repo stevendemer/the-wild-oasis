@@ -5,6 +5,7 @@ import BookingDataBox from "./BookingDataBox";
 import { useMoveBack } from "@/hooks/useMoveBack";
 import { Button } from "./ui/button";
 import { useNavigate } from "react-router-dom";
+import Spinner from "./Spinner";
 
 const BookingDetails = () => {
   const moveBack = useMoveBack();
@@ -12,20 +13,18 @@ const BookingDetails = () => {
   //   const {} =
 
   const { data: booking, error, isLoading } = useBooking();
+
+  if (isLoading) {
+    return <Spinner />;
+  }
+
   if (!booking) {
     return (
-      <div className="text-2xl font-semibold text-center">
+      <div className="text-2xl font-semibold text-center sm:text-4xl">
         No booking found !
       </div>
     );
   }
-
-  if (isLoading) {
-    return (
-      <div className="block w-20 h-20 bg-blue-500 animate-spin">Loading...</div>
-    );
-  }
-
   const statusToTagName = {
     unconfirmed: "bg-indigo-500",
     "checked-in": "bg-green-500",

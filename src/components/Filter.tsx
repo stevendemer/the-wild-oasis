@@ -14,6 +14,8 @@ const Filter = ({
 
   function onClick(value: string) {
     searchParams.set(filterField, value);
+    // avoids error when on last page, not enough records to fetch from DB
+    if (searchParams.get("page")) searchParams.set("page", String(1));
     setSearchParams(searchParams);
   }
 

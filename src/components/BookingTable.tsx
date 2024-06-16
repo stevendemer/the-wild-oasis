@@ -11,7 +11,8 @@ import {
 } from "@/components/ui/table";
 import BookingRow from "./BookingRow";
 import Pagination from "./Pagination";
-import { ModalProvider } from "@/context/MenuContext";
+import Spinner from "./Spinner";
+import ConfirmModal from "./ConfirmModal";
 
 const BookingTable = () => {
   const { bookings, isLoading, error, count } = useBookings();
@@ -21,7 +22,7 @@ const BookingTable = () => {
   }
 
   if (isLoading) {
-    return <div>Loading...</div>;
+    return <Spinner />;
   }
 
   console.log(bookings);
@@ -35,31 +36,30 @@ const BookingTable = () => {
   }
 
   return (
-    <ModalProvider>
-      <Table className="mt-20 container mx-auto">
-        <TableCaption>All bookings</TableCaption>
-        <TableHeader>
-          <TableRow>
-            <TableHead>Cabin</TableHead>
-            <TableHead>Guest</TableHead>
-            <TableHead>Dates</TableHead>
-            <TableHead>Status</TableHead>
-            <TableHead>Amount</TableHead>
-          </TableRow>
-        </TableHeader>
-        {/* {filteredCabins?.map((cabin: Tables<"cabins">) => (
+    <Table className="mt-20 container mx-auto">
+      <TableCaption>All bookings</TableCaption>
+      <TableHeader>
+        <TableRow>
+          <TableHead>Cabin</TableHead>
+          <TableHead>Guest</TableHead>
+          <TableHead>Dates</TableHead>
+          <TableHead>Status</TableHead>
+          <TableHead>Amount</TableHead>
+        </TableRow>
+      </TableHeader>
+      {/* {filteredCabins?.map((cabin: Tables<"cabins">) => (
             <CabinRow key={cabin.id} cabin={cabin} />
           ))} */}
-        {bookings?.map((booking) => (
-          <BookingRow booking={booking} key={booking.id} />
-        ))}
-        <TableFooter>
-          <TableCell colSpan={5}>
-            <Pagination count={count} />
-          </TableCell>
-        </TableFooter>
-      </Table>
-    </ModalProvider>
+      {bookings?.map((booking) => (
+        <BookingRow booking={booking} key={booking.id} />
+      ))}
+      <TableFooter>
+        <TableCell colSpan={5}>
+          <Pagination count={count} />
+        </TableCell>
+      </TableFooter>
+      <ConfirmModal label="Are you sure you want to delete this booking ?" />
+    </Table>
   );
 };
 

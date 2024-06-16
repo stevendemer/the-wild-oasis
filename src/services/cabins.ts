@@ -75,7 +75,9 @@ export async function createCabin(newCabin: Tables<"cabins">) {
   return data;
 }
 
-export async function createEditCabin(newCabin: Tables<"cabins">, id: number) {
+export async function createEditCabin(newCabin: any, id: number) {
+  console.log("Cabin for editing is ", newCabin);
+
   const hasImagePath = newCabin.image?.startsWith?.(supabaseUrl);
 
   const imageName = `${Math.random()}-${newCabin.image.name}`.replaceAll(
@@ -93,7 +95,11 @@ export async function createEditCabin(newCabin: Tables<"cabins">, id: number) {
   if (!id) query = query.insert([{ ...newCabin, image: imagePath }]);
 
   // B) EDIT
-  if (id) query = query.update({ ...newCabin, image: imagePath }).eq("id", id);
+  if (id) {
+    query = query
+      .update({ ...newCabin, image: hasImagePath && imagePath })
+      .eq("id", id);
+  }
 
   const { data, error } = await query.select().single().throwOnError();
 

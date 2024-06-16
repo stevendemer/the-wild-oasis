@@ -13,6 +13,7 @@ import { useCreateCabin } from "@/hooks/useCreateCabin";
 import { useEditCabin } from "@/hooks/useEditCabin";
 import { useModal } from "@/store";
 import { useEffect } from "react";
+import toast from "react-hot-toast";
 
 type FormValues = {
   name: string;
@@ -34,7 +35,7 @@ const CreateCabinForm = () => {
 
   const { isOpen, onClose, data } = useModal();
 
-  const { cabin, title } = data;
+  const { cabin, title } = data || {};
 
   const isEdit = Boolean(cabin);
 
@@ -44,10 +45,11 @@ const CreateCabinForm = () => {
     register,
     handleSubmit,
     setValue,
+    getValues,
     reset,
     formState: { errors, isValid },
   } = useForm<FormValues>({
-    defaultValues: cabin || {},
+    defaultValues: isEdit ? cabin : {},
   });
 
   useEffect(() => {
@@ -62,14 +64,18 @@ const CreateCabinForm = () => {
     if (isEdit) {
       editCabin(
         {
-          newCabinData: { ...data, image },
+          newCabinData: {
+            ...data,
+          },
           id: cabin.id,
-          image,
         },
         {
           onSuccess: (data) => {
             reset();
             onClose();
+          },
+          onError: (error) => {
+            toast.error(error.message);
           },
         }
       );
@@ -85,6 +91,8 @@ const CreateCabinForm = () => {
     }
   });
 
+  console.log("Data is ", cabin);
+
   return (
     <Dialog open={isOpen} onOpenChange={onClose} defaultOpen={isOpen} modal>
       <DialogContent className="sm:max-w-lg space-y-4">
@@ -97,8 +105,11 @@ const CreateCabinForm = () => {
               Cabin name
             </Label>
             <Input
-              {...register("name", { required: "Field is required" })}
+              {...register("name", {
+                required: isEdit ? false : "This field is required",
+              })}
               placeholder="002"
+              disabled={isWorking}
             />
             {errors.name?.message && (
               <span className="text-red-700 text-xl">
@@ -111,13 +122,14 @@ const CreateCabinForm = () => {
             </Label>
             <Input
               {...register("max_capacity", {
-                required: "Field is required",
+                required: isEdit ? false : "This field is required",
                 min: {
                   value: 1,
                   message: "Capacity should be at least 1",
                 },
               })}
               placeholder="12"
+              disabled={isWorking}
             />
             {errors?.max_capacity?.message && (
               <span className="text-red-700 text-xl">
@@ -130,13 +142,14 @@ const CreateCabinForm = () => {
             </Label>
             <Input
               {...register("regular_price", {
-                required: "Field is required",
+                required: isEdit ? false : "This field is required",
                 min: {
                   value: 1,
                   message: "Price should be at least 1",
                 },
               })}
               placeholder="900"
+              disabled={isWorking}
             />
             {errors?.regular_price?.message && (
               <span className="text-red-700 text-xl">
@@ -153,10 +166,14 @@ const CreateCabinForm = () => {
                   value: 0,
                   message: "Discount cannot be negative",
                 },
+                validate: (value) =>
+                  value <= getValues().regular_price ||
+                  "Discount should be less than regular price",
               })}
               defaultValue={0}
               placeholder="50"
               type="number"
+              disabled={isWorking}
             />
             {errors?.discount?.message && (
               <span className="text-red-700 text-xl">
@@ -167,7 +184,11 @@ const CreateCabinForm = () => {
             <Label className="text-md font-regular" htmlFor="description">
               Description
             </Label>
-            <Input {...register("description")} placeholder="50" />
+            <Input
+              disabled={isWorking}
+              {...register("description")}
+              placeholder="50"
+            />
             {errors?.description?.message && (
               <span className="text-red-700 text-xl">
                 {errors.description.message}
@@ -179,12 +200,13 @@ const CreateCabinForm = () => {
             </Label>
             <Input
               {...register("image", {
-                required: "Field is required",
+                required: isEdit ? false : "This field is required",
               })}
               className="cursor-pointer"
               type="file"
               name="image"
               accept="image/*"
+              disabled={isWorking}
             />
             {errors?.image?.message && (
               <span className="text-red-700 text-xl">

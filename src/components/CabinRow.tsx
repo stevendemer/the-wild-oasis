@@ -25,7 +25,6 @@ import { HiSquare2Stack, HiPencil, HiTrash } from "react-icons/hi2";
 import { MoreVertical } from "lucide-react";
 import { useState } from "react";
 import { useModal } from "@/store";
-import CreateCabinForm from "./CreateCabinForm";
 
 const CabinRow = ({ cabin }: { cabin: Tables<"cabins"> }) => {
   const { isDeleting, deleteCabin } = useDeleteCabin();

@@ -81,6 +81,8 @@ export async function deleteBooking(id: number) {
     .eq("id", id)
     .throwOnError();
 
+  console.log("dATA IS ", data);
+
   return data;
 }
 

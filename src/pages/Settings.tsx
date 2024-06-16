@@ -1,5 +1,7 @@
+import UpdateSettingsForm from "@/components/UpdateSettingsForm";
+
 const Settings = () => {
-  return <div>Settings</div>;
+  return <UpdateSettingsForm />;
 };
 
 export default Settings;

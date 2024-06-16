@@ -1,3 +1,4 @@
+import toast from "react-hot-toast";
 import { supabase, supabaseUrl } from "./supabase";
 
 export async function signUp({
@@ -37,7 +38,9 @@ export async function logIn({
     password,
   });
 
-  if (error) throw new Error(error.message);
+  if (error) {
+    console.error(error);
+  }
 
   return data;
 }
