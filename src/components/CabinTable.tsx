@@ -12,7 +12,7 @@ import {
 import { Skeleton } from "./ui/skeleton";
 import { useSearchParams } from "react-router-dom";
 import { Tables } from "@/types/database";
-import { MenuProvider } from "@/context/MenuContext";
+import { ModalProvider } from "@/context/MenuContext";
 import CabinRow from "./CabinRow";
 import Filter from "./Filter";
 import SortBy from "./SortBy";
@@ -20,14 +20,19 @@ import CabinTableBody from "./TableBody";
 import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import Pagination from "./Pagination";
+import { Button } from "./ui/button";
+import { useModal } from "@/store";
+import { Plus } from "lucide-react";
 
 const CabinTable = () => {
-  const { isLoading, cabins, error } = useCabins();
+  const { isLoading, cabins, error, count } = useCabins();
   const [searchParams] = useSearchParams();
   const [sortedCabins, setSortedCabins] = useState<Tables<"cabins">[]>([]);
   const [filter, setFilter] = useState("");
   const [filteredCabins, setFilteredCabins] = useState<Tables<"cabins">[]>([]);
   const [sum, setSum] = useState(0);
+
+  const { onOpen } = useModal();
 
   // let filteredCabins: Tables<"cabins">[] = [];
 
@@ -150,7 +155,7 @@ const CabinTable = () => {
   };
 
   return (
-    <MenuProvider>
+    <ModalProvider>
       <div className="flex justify-end absolute right-10 z-10">
         <Filter
           filterField="discount"
@@ -182,10 +187,11 @@ const CabinTable = () => {
         />
       </div>
       <Table className="mt-20">
-        <TableCaption>All cabins</TableCaption>
         <TableHeader>
           <TableRow>
-            <TableHead className="w-[200px]"></TableHead>
+            <TableHead className="w-[200px] sm:table-cell">
+              <span className="sr-only">Cabin image</span>
+            </TableHead>
             <TableHead className="w-[120px]">Name</TableHead>
             <TableHead>Capacity</TableHead>
             <TableHead>Price</TableHead>
@@ -204,12 +210,16 @@ const CabinTable = () => {
           <TableRow>
             <TableCell colSpan={8} className="text-lg font-semibold space-y-8">
               Total: <span>{getSum(filteredCabins)} $</span>
-              <Pagination count={45} />
+              <Pagination count={count} />
             </TableCell>
           </TableRow>
         </TableFooter>
       </Table>
-    </MenuProvider>
+      <Button onClick={onOpen} className="items-center space-x-2" size="sm">
+        <Plus />
+        <span>Add cabin</span>
+      </Button>
+    </ModalProvider>
   );
 };
 

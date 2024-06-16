@@ -1,9 +1,5 @@
-import { createCabin } from "@/services/cabins";
-import { QueryClient, useMutation } from "@tanstack/react-query";
-import toast from "react-hot-toast";
 import { useForm } from "react-hook-form";
 import { Button } from "./ui/button";
-import { useState } from "react";
 import { Label } from "./ui/label";
 import { Input } from "./ui/input";
 import {
@@ -11,11 +7,12 @@ import {
   DialogContent,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
 } from "@/components/ui/dialog";
-import { ErrorMessage } from "@hookform/error-message";
 import { DialogClose } from "@radix-ui/react-dialog";
 import { useCreateCabin } from "@/hooks/useCreateCabin";
+import { useEditCabin } from "@/hooks/useEditCabin";
+import { useModal } from "@/store";
+import { useEffect } from "react";
 
 type FormValues = {
   name: string;
@@ -30,54 +27,69 @@ type FormValues = {
 };
 
 const CreateCabinForm = () => {
-  // const client = new QueryClient();
+  const { isCreating, createCabin } = useCreateCabin();
+  const { editCabin, isEditing } = useEditCabin();
 
-  const [show, setShow] = useState(false);
-  const { error, isCreating, createCabin } = useCreateCabin();
-  // const { mutate, isPending } = useMutation({
-  //   mutationFn: createCabin,
-  //   onSuccess: () => {
-  //     client.invalidateQueries({ queryKey: ["cabins"] });
-  //     toast.success("New cabin added !");
-  //     reset();
-  //   },
-  //   onError: (error) => toast.error(error.message),
-  // });
+  const isWorking = isEditing || isCreating;
 
-  //   const { isCreating, createCabin } = useCreateCabin();
+  const { isOpen, onClose, data } = useModal();
+
+  const { cabin, title } = data;
+
+  const isEdit = Boolean(cabin);
+
+  // console.log("Data from state is ", data.title);
 
   const {
     register,
     handleSubmit,
+    setValue,
     reset,
-    getValues,
     formState: { errors, isValid },
-  } = useForm<FormValues>();
+  } = useForm<FormValues>({
+    defaultValues: cabin || {},
+  });
+
+  useEffect(() => {
+    if (cabin) {
+      Object.keys(cabin).forEach((key) => setValue(key, cabin[key]));
+    }
+  }, [cabin, setValue]);
 
   const onSubmit = handleSubmit((data) => {
     const image = typeof data.image === "string" ? data.image : data.image[0];
 
-    createCabin({
-      ...data,
-      image,
-    });
-
+    if (isEdit) {
+      editCabin(
+        {
+          newCabinData: { ...data, image },
+          id: cabin.id,
+          image,
+        },
+        {
+          onSuccess: (data) => {
+            reset();
+            onClose();
+          },
+        }
+      );
+    } else {
+      createCabin({
+        ...data,
+        image,
+      });
+    }
     if (isValid) {
-      setShow(false);
       reset();
+      onClose();
     }
   });
 
   return (
-    <Dialog onOpenChange={() => setShow(true)}>
-      <DialogTrigger asChild>
-        <Button className="rounded-lg text-md" onClick={() => setShow(true)}>
-          Add new cabin
-        </Button>
-      </DialogTrigger>
+    <Dialog open={isOpen} onOpenChange={onClose} defaultOpen={isOpen} modal>
       <DialogContent className="sm:max-w-lg space-y-4">
         <DialogHeader>
-          <DialogTitle>Add new cabin</DialogTitle>
+          <DialogTitle>{title || "Add new cabin"}</DialogTitle>
         </DialogHeader>
         <div className="flex items-center space-x-2">
           <form onSubmit={onSubmit} className="grid flex-1 gap-4">
@@ -182,12 +194,12 @@ const CreateCabinForm = () => {
 
             <DialogClose asChild>
               <Button
-                disabled={isCreating}
+                disabled={isWorking}
                 type="submit"
                 size="sm"
                 className="px-3"
               >
-                Submit
+                {isEdit ? "Save changes" : "Add cabin"}
               </Button>
             </DialogClose>
           </form>

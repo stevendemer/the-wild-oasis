@@ -1,12 +1,25 @@
 import { TableBody, TableCell, TableRow } from "@/components/ui/table";
-import { Tables } from "@/types/database";
 import { useNavigate } from "react-router-dom";
 import { format, isToday, startOfDay } from "date-fns";
 import { formatCurrency, formatDistanceFromNow } from "@/utils/helpers";
 import { Badge } from "./ui/badge";
 import { cn } from "@/lib/utils";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { Button } from "./ui/button";
+
+import { Tables } from "@/types/database";
+import { HiPencil, HiTrash } from "react-icons/hi2";
+import { MoreVertical, Eye, CircleCheckBig } from "lucide-react";
 
 const BookingRow = ({ booking }: { booking: Tables<"bookings"> }) => {
+  const navigate = useNavigate();
+
   const {
     id: bookingId,
     created_at,
@@ -21,9 +34,9 @@ const BookingRow = ({ booking }: { booking: Tables<"bookings"> }) => {
   } = booking;
 
   const statusToTagName = {
-    unconfirmed: "bg-blue-500",
+    unconfirmed: "bg-indigo-500",
     "checked-in": "bg-green-500",
-    "checked-out": "bg-zinc-500",
+    "checked-out": "bg-yellow-500",
   };
 
   return (
@@ -53,6 +66,45 @@ const BookingRow = ({ booking }: { booking: Tables<"bookings"> }) => {
         </TableCell>
         <TableCell className="font-semibold">
           {formatCurrency(total_price!)}
+        </TableCell>
+        <TableCell className="flex flex-1 space-x-4 sm:table-cell">
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button size="icon" variant="outline" className="h-8 w-8">
+                <MoreVertical className="h-3.5 w-3.5" />
+                <span className="sr-only">More</span>
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end">
+              <DropdownMenuItem
+                onClick={() => navigate(`/bookings/${booking.id}`)}
+                className="space-x-2"
+              >
+                <span>
+                  <Eye className="w-3.5 h-3.5" />
+                </span>
+                <span>See details</span>
+              </DropdownMenuItem>
+              {booking.status === "unconfirmed" && (
+                <DropdownMenuItem
+                  onClick={() => navigate(`/checkin/${booking.id}`)}
+                  className="space-x-2"
+                >
+                  <span>
+                    <CircleCheckBig className="w-3.5 h-3.5" />
+                  </span>
+                  <span>Check in</span>
+                </DropdownMenuItem>
+              )}
+              <DropdownMenuSeparator />
+              <DropdownMenuItem className="space-x-2">
+                <span>
+                  <HiTrash className="w-3.5 h-3.5" />
+                </span>
+                <span>Delete</span>
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
         </TableCell>
       </TableRow>
     </TableBody>

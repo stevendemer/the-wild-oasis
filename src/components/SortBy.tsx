@@ -23,7 +23,7 @@ const SortBy = ({
     <div className="relative left-0">
       <Select onValueChange={onChange}>
         <SelectTrigger className="w-[300px]">
-          <SelectValue placeholder={`Sort by ${options[0].label}`} />
+          <SelectValue placeholder={`${options[0].label}`} />
         </SelectTrigger>
         <SelectContent>
           {options.map((option) => (

@@ -1,6 +1,7 @@
 import { useSearchParams } from "react-router-dom";
 import { Button } from "./ui/button";
 import { PAGE_SIZE } from "@/utils/constants";
+import { ChevronRight, ChevronLeft } from "lucide-react";
 
 const TablePagination = ({ count }: { count: number }) => {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -30,18 +31,28 @@ const TablePagination = ({ count }: { count: number }) => {
   }
 
   return (
-    <div className="flex items-center flex-1 space-x-4 text-sm justify-between mx-8">
+    <div className="flex items-center flex-1 space-x-4 text-sm justify-between">
       <span>
         Showing <b> {(currentPage - 1) * PAGE_SIZE + 1} </b> to{" "}
         <b> {currentPage === pageCount ? count : currentPage * PAGE_SIZE}</b> of{" "}
         {count} results
       </span>
-      <div className="relative right-0  items-center space-x-4 ">
-        <Button disabled={currentPage === 1} onClick={() => prevPage()}>
+      <div className="relative right-0  items-center space-x-4 flex">
+        <Button
+          className="btn-frosted"
+          disabled={currentPage === 1}
+          onClick={() => prevPage()}
+        >
+          <ChevronLeft />
           Previous
         </Button>
-        <Button disabled={currentPage === pageCount} onClick={() => nextPage()}>
+        <Button
+          className="bnt-frosted "
+          disabled={currentPage === pageCount}
+          onClick={() => nextPage()}
+        >
           Next
+          <ChevronRight />
         </Button>
       </div>
     </div>

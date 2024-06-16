@@ -2,7 +2,6 @@ import { useBookings } from "@/hooks/useBookings";
 import toast from "react-hot-toast";
 import {
   Table,
-  TableBody,
   TableCaption,
   TableCell,
   TableHead,
@@ -10,17 +9,9 @@ import {
   TableRow,
   TableFooter,
 } from "@/components/ui/table";
-import { Skeleton } from "./ui/skeleton";
-import { useSearchParams } from "react-router-dom";
-import { Tables } from "@/types/database";
-import { MenuProvider } from "@/context/MenuContext";
-import CabinRow from "./CabinRow";
-import Filter from "./Filter";
-import SortBy from "./SortBy";
-import CabinTableBody from "./TableBody";
-import { useEffect, useState } from "react";
 import BookingRow from "./BookingRow";
 import Pagination from "./Pagination";
+import { ModalProvider } from "@/context/MenuContext";
 
 const BookingTable = () => {
   const { bookings, isLoading, error, count } = useBookings();
@@ -44,7 +35,7 @@ const BookingTable = () => {
   }
 
   return (
-    <MenuProvider>
+    <ModalProvider>
       <Table className="mt-20 container mx-auto">
         <TableCaption>All bookings</TableCaption>
         <TableHeader>
@@ -68,7 +59,7 @@ const BookingTable = () => {
           </TableCell>
         </TableFooter>
       </Table>
-    </MenuProvider>
+    </ModalProvider>
   );
 };
 

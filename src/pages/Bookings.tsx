@@ -2,20 +2,7 @@ import { useBookings } from "@/hooks/useBookings";
 import toast from "react-hot-toast";
 import Filter from "@/components/Filter";
 import SortBy from "@/components/SortBy";
-import { MenuProvider } from "@/context/MenuContext";
-import {
-  Table,
-  TableBody,
-  TableCaption,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-  TableFooter,
-} from "@/components/ui/table";
-import { Skeleton } from "./ui/skeleton";
-import { useSearchParams } from "react-router-dom";
-import { Tables } from "@/types/database";
+import { ModalProvider } from "@/context/MenuContext";
 import BookingTable from "@/components/BookingTable";
 
 const Bookings = () => {
@@ -33,7 +20,7 @@ const Bookings = () => {
 
   return (
     <>
-      <MenuProvider>
+      <ModalProvider>
         <div className="flex justify-end absolute right-10 z-10">
           <Filter
             filterField="status"
@@ -63,7 +50,7 @@ const Bookings = () => {
           />
         </div>
         <BookingTable />
-      </MenuProvider>
+      </ModalProvider>
     </>
   );
 };

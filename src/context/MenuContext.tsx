@@ -4,28 +4,38 @@ import {
   ReactNode,
   Dispatch,
   SetStateAction,
+  useContext,
 } from "react";
 
-const MenuContext = createContext<{
-  openId: string;
-  close: () => void;
-  open: Dispatch<SetStateAction<string>>;
-  position: string | null;
-  setPosition: Dispatch<SetStateAction<null>>;
+const ModalContext = createContext<{
+  openModal: (name: string, props?: object) => void;
+  closeModal: () => void;
+  modal: { name: string; props: object } | null;
 } | null>(null);
 
-export function MenuProvider({ children }: { children: ReactNode }) {
-  const [openId, setOpenId] = useState("");
-  const [position, setPosition] = useState(null);
+export function ModalProvider({ children }: { children: ReactNode }) {
+  const [modal, setModal] = useState<{ name: string; props: object } | null>(
+    null
+  );
 
-  const close = () => setOpenId("");
-  const open = setOpenId;
+  const closeModal = () => setModal(null);
+
+  const openModal = (name: string, props = {}) => {
+    setModal({ name, props });
+  };
 
   return (
-    <MenuContext.Provider
-      value={{ openId, close, open, position, setPosition }}
-    >
+    <ModalContext.Provider value={{ modal, openModal, closeModal }}>
       {children}
-    </MenuContext.Provider>
+    </ModalContext.Provider>
   );
 }
+
+export const useModal = () => {
+  const ctx = useContext(ModalContext);
+  if (!ctx) {
+    throw new Error("Use this inside a provider");
+  }
+
+  return ctx;
+};

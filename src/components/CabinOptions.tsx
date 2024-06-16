@@ -30,17 +30,15 @@ const CabinOptions = () => {
           <SelectGroup>
             <SelectItem value="name-asc">Sort by name (A-Z)</SelectItem>
             <SelectItem value="name-desc">Sort by name (Z-A)</SelectItem>
-            <SelectItem value="regularPrice-asc">
-              Sort by price (low first)
-            </SelectItem>
+            <SelectItem value="regularPrice-asc">price (low first)</SelectItem>
             <SelectItem value="regularPrice-desc">
-              Sort by price (high first)
+              price (high first)
             </SelectItem>
             <SelectItem value="maxCapacity-asc">
-              Sort by capacity (low first)
+              capacity (low first)
             </SelectItem>
             <SelectItem value="maxCapacity-desc">
-              Sort by capacity (high first)
+              capacity (high first)
             </SelectItem>
           </SelectGroup>
         </SelectContent>

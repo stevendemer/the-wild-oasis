@@ -1,5 +1,7 @@
+import BookingDetails from "@/components/BookingDetails";
+
 const Booking = () => {
-  return <div>Booking</div>;
+  return <BookingDetails />;
 };
 
 export default Booking;

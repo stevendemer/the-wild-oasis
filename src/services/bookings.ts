@@ -19,7 +19,7 @@ export async function getBookings({
 }) {
   let query = supabase
     .from("bookings")
-    .select("*, cabins(name), guests(full_name, email)", { count: "exact" })
+    .select("*, cabins(id, name), guests(full_name, email)", { count: "exact" })
     .throwOnError();
 
   if (filter) {
@@ -54,4 +54,67 @@ export async function getBooking(id: number) {
     .throwOnError();
 
   return booking;
+}
+
+export async function updateBooking(
+  id: number,
+  obj: {
+    status: "checked-in" | "checked-out" | "unconfirmed";
+    is_paid: boolean;
+  }
+) {
+  const { data } = await supabase
+    .from("bookings")
+    .update(obj)
+    .eq("id", id)
+    .select()
+    .single()
+    .throwOnError();
+
+  return data;
+}
+
+export async function deleteBooking(id: number) {
+  const { data } = await supabase
+    .from("bookings")
+    .delete()
+    .eq("id", id)
+    .throwOnError();
+
+  return data;
+}
+
+export async function getStaysToday() {
+  const { data } = await supabase
+    .from("bookings")
+    .select("*, guests(full_name, nationality, country_flag")
+    .or(
+      `and(status.eq.unconfirmed, start_date.eq.${getToday()}), and(status, eq.checked_in, end_date.eq.${getToday()})`
+    )
+    .order("created_at")
+    .throwOnError();
+
+  return data;
+}
+
+export async function getStaysAfterDate(date: Date) {
+  const { data } = await supabase
+    .from("bookings")
+    .select("*, guests(full_name)")
+    .gte("start_date", date)
+    .lte("start_date", getToday())
+    .throwOnError();
+
+  return data;
+}
+
+export async function getBookingsAfterDate(date: Date) {
+  const { data } = await supabase
+    .from("bookings")
+    .select("created_at, total_price, extras_price")
+    .gte("created_at", date)
+    .lte("created_at", getToday({ end: true }))
+    .throwOnError();
+
+  return data;
 }

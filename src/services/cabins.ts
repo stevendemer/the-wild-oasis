@@ -1,15 +1,21 @@
 import { Regex } from "lucide-react";
 import { supabase, supabaseUrl } from "./supabase";
 import { Database, Tables, Enums } from "@/types/database";
+import { PAGE_SIZE } from "@/utils/constants";
 
 export async function getCabins({
   filter,
   sortBy,
+  page,
 }: {
   filter?: { field: string; value: string };
   sortBy?: { field: string; direction: string };
+  page: number;
 }) {
-  let query = supabase.from("cabins").select("*").throwOnError();
+  let query = supabase
+    .from("cabins")
+    .select("*", { count: "exact" })
+    .throwOnError();
 
   if (sortBy) {
     console.log("Field to sort the cabins by ", sortBy.field);
@@ -18,9 +24,16 @@ export async function getCabins({
     });
   }
 
-  const { data: cabins } = await query;
+  // pagination
+  if (page) {
+    const from = (page - 1) * (PAGE_SIZE - 1);
+    const to = from + PAGE_SIZE + 1;
+    query = query.range(from, to);
+  }
 
-  return cabins;
+  const { data: cabins, count } = await query;
+
+  return { cabins, count };
 }
 
 export async function createCabin(newCabin: Tables<"cabins">) {
@@ -77,12 +90,12 @@ export async function createEditCabin(newCabin: Tables<"cabins">, id: number) {
   let query = supabase.from("cabins");
 
   // A) CREATE
-  // if (!id) query = query.insert([{ ...newCabin, image: imagePath }]);
+  if (!id) query = query.insert([{ ...newCabin, image: imagePath }]);
 
   // B) EDIT
   if (id) query = query.update({ ...newCabin, image: imagePath }).eq("id", id);
 
-  const { data, error } = query.select().single();
+  const { data, error } = await query.select().single().throwOnError();
 
   if (error) {
     console.error(error);
@@ -93,8 +106,8 @@ export async function createEditCabin(newCabin: Tables<"cabins">, id: number) {
   if (hasImagePath) return data;
 
   const { error: storageError } = await supabase.storage
-    .from("cabin-images")
-    .upload(imageName, newCabin.image);
+    .from("cabin_images")
+    .upload(imageName, newCabin.image!);
 
   // 3. Delete the cabin IF there was an error uplaoding image
   if (storageError) {
