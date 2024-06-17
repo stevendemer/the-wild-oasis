@@ -55,7 +55,6 @@ const UpdateSettingsForm = () => {
               defaultValue={min_booking_length}
               placeholder="4"
               type="number"
-              className="bg-gray-700"
               disabled={isUpdating}
               id="min-nights"
               onBlur={(e) => onUpdate(e, "min_booking_length")}
@@ -66,7 +65,6 @@ const UpdateSettingsForm = () => {
               defaultValue={max_booking_length}
               placeholder="4"
               type="number"
-              className="bg-gray-700"
               disabled={isUpdating}
               id="max-bookings"
               onBlur={(e) => onUpdate(e, "max_booking_length")}
@@ -77,7 +75,6 @@ const UpdateSettingsForm = () => {
               defaultValue={max_per_booking}
               placeholder="4"
               type="number"
-              className="bg-gray-700"
               disabled={isUpdating}
               id="max-guests"
               onBlur={(e) => onUpdate(e, "max_per_booking")}
@@ -88,7 +85,6 @@ const UpdateSettingsForm = () => {
               defaultValue={breakfast_price}
               placeholder="4"
               type="number"
-              className="bg-gray-700"
               disabled={isUpdating}
               id="break-price"
               onBlur={(e) => onUpdate(e, "breakfast_price")}

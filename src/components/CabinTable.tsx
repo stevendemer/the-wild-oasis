@@ -83,7 +83,7 @@ const CabinTable = () => {
 
   if (!cabins?.length) {
     return (
-      <div className="text-2xl font-semibold text-center ">
+      <div className="text-2xl sm:text-4xl font-bold font-mono text-center h-full flex justify-center items-center p-2">
         {" "}
         No cabins found !
       </div>

@@ -29,7 +29,7 @@ const BookingTable = () => {
 
   if (!bookings?.length) {
     return (
-      <div className="text-2xl font-semibold text-center">
+      <div className="text-2xl sm:text-4xl font-bold text-center flex justify-center items-center h-full font-mono">
         No bookings found !
       </div>
     );

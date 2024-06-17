@@ -14,6 +14,8 @@ import Booking from "./pages/Booking";
 import Checkin from "./pages/Checkin";
 import ProtectedRoute from "./components/ProtectedRoute";
 
+import { ThemeProvider } from "./components/ThemeProvider";
+
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
@@ -24,31 +26,33 @@ const queryClient = new QueryClient({
 
 export default function App() {
   return (
-    <QueryClientProvider client={queryClient}>
-      <ReactQueryDevtools initialIsOpen={false} />
-      <BrowserRouter>
-        <Routes>
-          <Route
-            element={
-              <ProtectedRoute>
-                <RootLayout />
-              </ProtectedRoute>
-            }
-          >
-            <Route index element={<Navigate replace to="/dashboard" />} />
-            <Route path="dashboard" element={<Dashboard />} />
-            <Route path="bookings" element={<Bookings />} />
-            <Route path="checkin/:bookingId" element={<Checkin />} />
-            <Route path="bookings/:bookingId" element={<Booking />} />
-            <Route path="cabins" element={<Cabins />} />
-            <Route path="users" element={<Users />} />
-            <Route path="settings" element={<Settings />} />
-            <Route path="account" element={<Account />} />
-            <Route path="*" element={<PageNotFound />} />
-          </Route>
-          <Route path="login" element={<Login />} />
-        </Routes>
-      </BrowserRouter>
-    </QueryClientProvider>
+    <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
+      <QueryClientProvider client={queryClient}>
+        <ReactQueryDevtools initialIsOpen={false} />
+        <BrowserRouter>
+          <Routes>
+            <Route
+              element={
+                <ProtectedRoute>
+                  <RootLayout />
+                </ProtectedRoute>
+              }
+            >
+              <Route index element={<Navigate replace to="/dashboard" />} />
+              <Route path="dashboard" element={<Dashboard />} />
+              <Route path="bookings" element={<Bookings />} />
+              <Route path="checkin/:bookingId" element={<Checkin />} />
+              <Route path="bookings/:bookingId" element={<Booking />} />
+              <Route path="cabins" element={<Cabins />} />
+              <Route path="users" element={<Users />} />
+              <Route path="settings" element={<Settings />} />
+              <Route path="account" element={<Account />} />
+              <Route path="*" element={<PageNotFound />} />
+            </Route>
+            <Route path="login" element={<Login />} />
+          </Routes>
+        </BrowserRouter>
+      </QueryClientProvider>
+    </ThemeProvider>
   );
 }

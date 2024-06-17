@@ -1,5 +1,7 @@
+import UpdateUserForm from "@/components/UpdateUserForm";
+
 const Account = () => {
-  return <div>Account</div>;
+  return <UpdateUserForm />;
 };
 
 export default Account;

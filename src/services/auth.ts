@@ -68,18 +68,25 @@ export async function updateCurrentUser({
   full_name,
   avatar,
 }: {
-  password: string;
-  full_name: string;
-  avatar: string;
+  password?: string;
+  full_name?: string;
+  avatar?: string;
 }) {
   // update the username OR password
-  let updatedData = {};
+  let updatedData = {} as {
+    password?: string;
+    data?: { full_name?: string };
+  };
 
   if (password) {
-    updatedData = { password };
+    updatedData.password = password;
   }
   if (full_name) {
-    updatedData = { data: { full_name } };
+    if (!updatedData.data) {
+      updatedData.data = {};
+    }
+    // updatedData = { data: { full_name } };
+    updatedData.data.full_name = full_name;
   }
 
   const { data, error } = await supabase.auth.updateUser(updatedData);
