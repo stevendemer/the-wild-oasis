@@ -1,5 +1,7 @@
+import DashboardLayout from "@/components/DashboardLayout";
+
 const Dashboard = () => {
-  return <div className="flex justify-center w-full gap-2 p-2">Dashboard</div>;
+  return <DashboardLayout />;
 };
 
 export default Dashboard;

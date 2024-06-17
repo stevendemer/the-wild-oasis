@@ -30,6 +30,7 @@ const Filter = ({
               option.value === currentFilter && "bg-indigo-500 text-gray-100"
             )}
             onClick={() => onClick(option.value)}
+            disabled={option.value === currentFilter}
           >
             {option.label}
           </Button>

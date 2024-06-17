@@ -52,7 +52,7 @@ const SignupForm = () => {
   return (
     <Card className="mx-auto w-full container bg-muted">
       <CardHeader>
-        <CardTitle className="text-xl font-bold sm:text-3xl p-6">
+        <CardTitle className="text-xl font-bold sm:text-3xl">
           Create new user
         </CardTitle>
       </CardHeader>
@@ -114,7 +114,7 @@ const SignupForm = () => {
             <span className="flex items-center max-w-lg space-x-4">
               <Button
                 disabled={isPending}
-                className="flex justify-center my-10 flex-1 bg-indigo-700 text-slate-100 font-semibold"
+                className="flex justify-center flex-1 bg-indigo-700 text-slate-100 font-semibold"
                 type="submit"
               >
                 Create user
@@ -123,7 +123,7 @@ const SignupForm = () => {
                 disabled={isPending}
                 type="reset"
                 onClick={() => reset()}
-                className="flex justify-center my-10 flex-1 bg-yellow-700 text-slate-100 font-semibold"
+                className="flex justify-center flex-1 bg-yellow-700 text-slate-100 font-semibold"
               >
                 Cancel
               </Button>

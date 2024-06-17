@@ -86,12 +86,13 @@ export async function deleteBooking(id: number) {
   return data;
 }
 
+// Whether there was a check in or check out in the day
 export async function getStaysToday() {
   const { data } = await supabase
     .from("bookings")
-    .select("*, guests(full_name, nationality, country_flag")
+    .select("*, guests(full_name, nationality, country_flag)")
     .or(
-      `and(status.eq.unconfirmed, start_date.eq.${getToday()}), and(status, eq.checked_in, end_date.eq.${getToday()})`
+      `and(status.eq.unconfirmed,start_date.eq.${getToday()}),and(status.eq.checked-in,end_date.eq.${getToday()})`
     )
     .order("created_at")
     .throwOnError();
@@ -99,7 +100,7 @@ export async function getStaysToday() {
   return data;
 }
 
-export async function getStaysAfterDate(date: Date) {
+export async function getStaysAfterDate(date: Date | string) {
   const { data } = await supabase
     .from("bookings")
     .select("*, guests(full_name)")
@@ -110,7 +111,7 @@ export async function getStaysAfterDate(date: Date) {
   return data;
 }
 
-export async function getBookingsAfterDate(date: Date) {
+export async function getBookingsAfterDate(date: Date | string) {
   const { data } = await supabase
     .from("bookings")
     .select("created_at, total_price, extras_price")

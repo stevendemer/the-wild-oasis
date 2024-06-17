@@ -29,7 +29,7 @@ const Header = () => {
   const { avatar, full_name } = user?.user_metadata;
 
   return (
-    <div className="h-full flex justify-end items-center w-full bg-gray-50 dark:bg-gray-800 p-4 border-b-[1px] border-slate-600 col-span-full space-x-2">
+    <div className="h-full flex justify-end items-center w-full bg-gray-50 dark:bg-gray-800 p-4 col-span-full space-x-2">
       <div className="flex justify-between items-center flex-1">
         <span className="font-mono hidden sm:text-xl sm:block">
           Welcome {full_name}{" "}
@@ -61,12 +61,12 @@ const Header = () => {
             {theme === "light" ? (
               <MdOutlineWbSunny
                 onClick={() => setTheme("dark")}
-                className="h-[1.2rem] w-[1.2rem]  transition-all dark:-rotate-90"
+                className="h-[1.2rem] w-[1.2rem]  transition-all duration-100"
               />
             ) : (
               <IoMoonOutline
                 onClick={() => setTheme("light")}
-                className="absolute h-[1.2rem] w-[1.2rem] transition-all  dark:scale-100"
+                className="absolute h-[1.2rem] w-[1.2rem] transition-all  duration-100"
               />
             )}
           </Button>
