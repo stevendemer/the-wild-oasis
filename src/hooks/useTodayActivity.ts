@@ -3,7 +3,7 @@ import { useQuery } from "@tanstack/react-query";
 
 export function useTodayActivity() {
   const { isLoading, data: activities } = useQuery({
-    queryKey: ["today-activity"],
+    queryKey: ["bookings"],
     queryFn: getStaysToday,
   });
 

@@ -11,7 +11,12 @@ type Inputs = {
 
 const LoginForm = () => {
   const { reset, formState, getValues, register, handleSubmit } =
-    useForm<Inputs>();
+    useForm<Inputs>({
+      defaultValues: {
+        email: "admin@gmail.com",
+        password: "helloworld",
+      },
+    });
 
   const { isLogging, login } = useLogin();
 
