@@ -5,6 +5,7 @@ import { Outlet } from "react-router-dom";
 import { Toaster } from "react-hot-toast";
 import { useUser } from "@/hooks/useUser";
 import { useEffect } from "react";
+import { Analytics } from "@vercel/analytics/react";
 
 const RootLayout = () => {
   const { user } = useUser();
@@ -20,6 +21,7 @@ const RootLayout = () => {
       <main className="bg-gray-200 dark:bg-gray-900 p-16 overflow-y-auto  flex flex-col items-center gap-8">
         <Toaster />
         <Outlet />
+        <Analytics />
       </main>
     </div>
   );
