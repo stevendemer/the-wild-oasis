@@ -1,7 +1,4 @@
-# The Wild Oasis 
-
-
-![logo-dark](https://github.com/stevendemer/the-wild-oasis/assets/47676542/fca73202-afb1-4552-a5d8-aad3077b6b90)
+<p align='center'>![logo-dark](https://github.com/stevendemer/the-wild-oasis/assets/47676542/fca73202-afb1-4552-a5d8-aad3077b6b90)</p>
 
 
 
