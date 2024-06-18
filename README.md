@@ -1,7 +1,7 @@
 # The Wild Oasis 
 
 
-![alt text](https://github.com/stevendemer/the-wild-oasis/public/logo-dark.png?raw=true)
+![alt text](https://github.com/stevendemer/the-wild-oasis/main/public/logo-dark.png?raw=true)
 
 
 The Wild Oasis is an internal cabin management application, intended to be used only by the employees for viewing bookings and managing the cabins. 
