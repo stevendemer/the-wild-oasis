@@ -1,5 +1,9 @@
 # The Wild Oasis 
 
+
+![alt text](https://github.com/stevendemer/the-wild-oasis/public/logo-dark.png?raw=true)
+
+
 The Wild Oasis is an internal cabin management application, intended to be used only by the employees for viewing bookings and managing the cabins. 
 
 ## Installation
@@ -44,6 +48,7 @@ Steven Demertzis
 
 <img src="https://img.shields.io/badge/Tailwind_CSS-38B2AC?style=for-the-badge&logo=tailwind-css&logoColor=white" />
 
+<img src="https://img.shields.io/badge/shadcn%2Fui-000000?style=for-the-badge&logo=shadcnui&logoColor=white" />
 </p>
 
 
