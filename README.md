@@ -2,7 +2,7 @@
 
 
 
-The Wild Oasis is an internal cabin management application, intended to be used only by the employees for viewing bookings and managing the cabins. 
+The Wild Oasis is an internal hotel management application, intended to be used only by the employees for viewing bookings and managing the cabins. 
 
 ## Installation
 
