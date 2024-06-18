@@ -54,6 +54,17 @@ Steven Demertzis
 </p>
 
 
+## Screenshots
+
+<p align="center">
+<img src="https://github.com/stevendemer/the-wild-oasis/assets/47676542/0cd75289-4d80-422e-ab35-128276ac1e5c" />
+<img src="https://github.com/stevendemer/the-wild-oasis/assets/47676542/dc2cd3a7-1029-4745-a574-a969b8d15208" />
+<img src="https://github.com/stevendemer/the-wild-oasis/assets/47676542/5d05e72a-18ce-4e3b-829a-573bdf3a0395" />
+</p>
+
+
+
+
 ## License
 
 [MIT](https://choosealicense.com/licenses/mit/)
