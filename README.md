@@ -66,7 +66,7 @@ that combines a plethora of libraries. For the styling i used ShadCN/UI with Tai
 
     *     A chart showing all daily hotel sales, showing both "total" sales and "extras" sales (only breakfast at the moment)
 
-    *    A chart showing statistics on stay durations, as this is an important metric for the hotel
+    *     A chart showing statistics on stay durations, as this is an important metric for the hotel
 
 *   Users should be able to define a few application-wide settings: breakfast price, min and max nights/booking, max guests/booking
 
